@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pecathon Quiz</title>
+
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(135deg, #5b0cb3, #0080ff);
+        font-family: "Poppins", sans-serif;
+    }
+
+    .container{
+        width: 85%;
+        max-width: 850px;
+        margin-top: 30px;
+        padding: 30px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .Heading{
+        color: white;
+        font-size: 55px;
+        margin: 15px;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .top-bar{
+        width: 100%;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .question-box{
+        background: rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        margin-bottom: 25px;
+    }
+
+    .Qfont{
+        color: white;
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    .options{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .option{
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.25);
+        color: #003753;
+        font-size: 22px;
+        font-weight: 600;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.25s;
+        text-align: center;
+    }
+
+    .option:hover{
+        background: rgba(255, 255, 255, 0.45);
+        transform: translateY(-4px);
+        box-shadow: 0px 5px 12px rgba(0,0,0,0.2);
+    }
+
+    .option:disabled{
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .Answer{
+        margin-top: 25px;
+        padding: 15px;
+        font-size: 28px;
+        text-align: center;
+        font-weight: 600;
+        border-radius: 12px;
+        color: white;
+    }
+
+    #NextBTN{
+        margin: 30px auto 10px;
+        padding: 12px 35px;
+        font-size: 28px;
+        background-color: white;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: 600;
+        display: none;
+    }
+    #NextBTN:hover{
+        background-color: #cce7ff;
+        transform: translateY(-3px);
+    }
+
+</style>
+</head>
+
+<body>
+
+<h1 class="Heading">Pecathon Quiz</h1>
+
+<div class="container">
+
+    <div class="top-bar">
+        <span id="scoreText">Score: 0</span>
+        <span>Username <button style="padding:4px 12px; border-radius:6px; cursor:pointer;">Logout</button></span>
+    </div>
+
+    <div class="question-box">
+        <p class="Qfont" id="qNumber">Question</p>
+        <p class="Qfont" id="qText">Loading...</p>
+    </div>
+
+    <div class="options" id="optionsBox"></div>
+
+    <p class="Answer" id="Answer"></p>
+
+    <button id="NextBTN" onclick="nextQuestion()">Next</button>
+
+</div>
+
+<script>
+
+// ===============================
+//      QUESTIONS LIST
+// ===============================
+const questions = [
+  {
+    question: "Who is the storyteller in the frame story of the Arabian Nights?",
+    options: ["Scheherazade", "Dinarzad", "Shahzaman", "Aladdin"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "Why does King Shahrayar marry a new wife every night?",
+    options: [
+      "He fears infidelity after his first wife’s betrayal",
+      "He wants many heirs",
+      "It is a tradition in his kingdom",
+      "He’s under a curse"
+    ],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "How many nights does Scheherazade tell stories to Shahrayar to save her life?",
+    options: ["1001", "365", "500", "777"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "Which character from the Arabian Nights is a sailor who goes on many voyages?",
+    options: ["Sinbad", "Ali Baba", "Aladdin", "Abou Hassan"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "Which famous story from the Arabian Nights involves a magic lamp?",
+    options: ["Aladdin", "Ali Baba", "The Fisherman and the Genie", "The City of Brass"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "In the story of Ali Baba, what is the secret phrase used to open the cave of the forty thieves?",
+    options: ["Open Sesame", "Abracadabra", "Sesame Seed", "Open Shiver"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "Who first brought the tales of Aladdin and Ali Baba into European versions of the Nights?",
+    options: ["Antoine Galland", "Richard Burton", "John Payne", "Joseph Charles Mardrus"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "In “The Fisherman and the Genie”, where is the genie imprisoned when the fisherman frees him?",
+    options: ["A bottle", "A lamp", "A ring", "A necklace"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "What is the Arabic title of “One Thousand and One Nights”?",
+    options: ["Alf Laylah wa‑Laylah", "Alf Afsaneh", "Madinat al‑Qissas", "Layali al‑Hikaya"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "Which city is often referenced or used as a setting in the frame story of the Nights?",
+    options: ["Baghdad", "Cairo", "Samarkand", "Persia"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "What is a ‘jinn’ in the context of Arabian Nights?",
+    options: ["A supernatural being", "A type of ship", "A magic carpet", "A city guard"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "Which creature in Arabian Nights is known for being monstrous and possibly eating humans, sometimes found in cemeteries?",
+    options: ["Ghoul", "Dandan", "Ifrit", "Roc"],
+    correct: 0,
+    difficulty: "Hard"
+  },
+  {
+    question: "Which tale features a character named Abou Hassan who is tricked into thinking he is the caliph?",
+    options: ["The Sleeper and the Waker", "The Ebony Horse", "The Three Apples", "The Porter and the Three Ladies"],
+    correct: 0,
+    difficulty: "Hard"
+  },
+  {
+    question: "Who is Shahzaman in Arabian Nights?",
+    options: ["Shahrayar’s brother", "Scheherazade’s brother", "A genie", "The vizier"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "What is the name of Scheherazade’s sister, who asks her to tell stories each night?",
+    options: ["Dinarzad (or Dunyazad)", "Pari Banu", "Zaynab", "Lulu"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "Which story from Arabian Nights features a magical carpet of transport?",
+    options: ["Prince Ahmed and the Magic Carpet", "Aladdin’s Lamp", "The City of Brass", "The Fisherman and the Genie"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "In the Arabian Nights, what happens if Scheherazade stops telling stories or loses interest?",
+    options: [
+      "She is executed the next morning",
+      "She is sent away from the palace",
+      "She becomes queen immediately",
+      "She marries someone else"
+    ],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "Which king in the Arabian Nights is known for his cruelty and executing his brides?",
+    options: ["Shahrayar", "Harun al-Rashid", "Sindbad", "Ali Baba"],
+    correct: 0,
+    difficulty: "Easy"
+  },
+  {
+    question: "The “City of Brass” is a tale in Arabian Nights about a deserted city — its inhabitants are mostly what?",
+    options: ["Corpses", "Spirits", "Genies", "Automatons"],
+    correct: 0,
+    difficulty: "Hard"
+  },
+  {
+    question: "Which fish-like mythical creature appears in Arabian Nights, described as being large enough to swallow an elephant?",
+    options: ["Dandan (Dendan)", "Roc", "Marid", "Ifrit"],
+    correct: 1,
+    difficulty: "Hard"
+  },
+  {
+    question: "What century did the compilation of the One Thousand and One Nights take place in, during the Islamic Golden Age?",
+    options: ["9th century", "13th century", "15th century", "18th century"],
+    correct: 0,
+    difficulty: "Medium"
+  },
+  {
+    question: "Which of these is NOT one of the traditional genres found within the Nights stories?",
+    options: ["Science fiction", "Romance", "Fable", "Historical anecdote"],
+    correct: 0,
+    difficulty: "Hard"
+  },
+  {
+    question: "What does Scheherazade use to end her stories each night to keep the king interested?",
+    options: ["A cliffhanger", "A moral lesson", "A poem", "A riddle"],
+    correct: 0,
+    difficulty: "Easy"
+  }
+];
+
+
+let index = 0;
+let score = 0;
+
+// Load the first question
+loadQuestion();
+
+// ===============================
+//         LOAD QUESTION
+// ===============================
+function loadQuestion() {
+    document.getElementById("Answer").innerHTML = "";
+    document.getElementById("Answer").style.backgroundColor = "transparent";
+    document.getElementById("NextBTN").style.display = "none";
+
+    // Question number
+    document.getElementById("qNumber").innerHTML = `Question ${index + 1} - <span style="font-size:18px;color:#fff;">${questions[index].difficulty}</span>`;
+    document.getElementById("qText").innerHTML = questions[index].question;
+
+    // Copy options and shuffle
+    const options = [...questions[index].options];
+    const correctAnswer = options[questions[index].correct];
+    shuffleArray(options);
+
+    questions[index].shuffledCorrect = options.indexOf(correctAnswer);
+
+    let optionsHTML = "";
+    options.forEach((opt, i) => {
+        optionsHTML += `<button class="option" onclick="checkAnswer(${i})" id="opt${i}">${opt}</button>`;
+    });
+    document.getElementById("optionsBox").innerHTML = optionsHTML;
+}
+
+
+// ===============================
+//          CHECK ANSWER
+// ===============================
+function checkAnswer(selected) {
+
+    const correct = questions[index].shuffledCorrect;
+
+    for (let i = 0; i < 4; i++) {
+        document.getElementById("opt" + i).disabled = true;
+    }
+
+    const ansBox = document.getElementById("Answer");
+
+    if (selected === correct) {
+        ansBox.innerHTML = "✔ Correct!";
+        ansBox.style.backgroundColor = "rgba(0, 200, 0, 0.7)";
+        score++;
+        document.getElementById("scoreText").innerHTML = "Score: " + score;
+    } 
+    else {
+        ansBox.innerHTML = "❌ Wrong!";
+        ansBox.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
+        // Highlight correct option
+        document.getElementById("opt" + correct).style.backgroundColor = "rgba(0, 200, 0, 0.7)";
+    }
+
+    document.getElementById("NextBTN").style.display = "block";
+}
+
+// ===============================
+//         NEXT QUESTION
+// ===============================
+function nextQuestion() {
+    index++;
+
+    if (index >= questions.length) {
+        showFinalScore();
+        return;
+    }
+
+    loadQuestion();
+}
+
+//Shuffle Function
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+
+// ===============================
+//        FINAL SCORE SCREEN
+// ===============================
+function showFinalScore() {
+    document.querySelector(".container").innerHTML = `
+        <h1 style="color:white;text-align:center;">🎉 Quiz Completed!</h1>
+        <h2 style="color:white;text-align:center;">Your Score: ${score} / ${questions.length}</h2>
+        <button onclick="location.reload()" 
+        style="padding:15px 40px;font-size:30px;border-radius:10px;cursor:pointer;margin:auto;display:block;">
+            Restart Quiz
+        </button>
+    `;
+}
+
+</script>
+
+</body>
+</html>
